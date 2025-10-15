@@ -1,0 +1,74 @@
+Problem: 
+PCR will create duplicates of the same area. 
+If this deduplication isn't done, it can lead to over estimating the 
+abundance of certain sequences and artificially increasing the read counts
+
+Example input file: 
+
+Psuedocode:
+use argparse to set input, output, UMI list, and help flags
+
+Create empty set to store UMI, Strand, Cigar, Position, Chromosome
+
+open input file for reading, open UMI list for reading, open output file for writing:
+	for each line in input file:
+		strip line
+		if line starts with @:
+			add it to output file
+		else:
+			info = split lines by tabs
+			# Extract information for dict set up at beginning
+			# UMI
+				long_umi = info[0]
+				split_umi = split long UMI on ":"
+				umi = split_umi[-1]
+				if UMI is not in the UMI list:
+					skip to next line
+				else:
+					add UMI to key_tuple
+			# Strand
+				flag = info[1] # second col of a sam file
+				if ((flag & 16) \==16): # Does this flag need to be converted to binary?
+					rev_comp = true
+					strand = "-"
+				else:
+					strand = "+"
+				add strand to key_tuple
+			# CIGAR
+				cigar = info[5]
+				add cigar to key_tuple
+				# Separating out each part of the cigar string
+				current_number = empty character ('')
+				cigar_parts = empty list ([])
+				for char in cigar:
+					if char is a digit:
+						current_number += char
+					else:
+						if current number != '':
+							add current number and char to cigar_parts
+							set current number back to ''
+			# Position
+				pos = info[3]
+				if strand == "+":
+					if first letter (cigar_parts[0][1]) == 'S':
+						start = pos - as a numeric first number in cigar (cigar_parts[0][0])				
+						​else:
+					if last letter (cigar_parts[-1][1]) == 'S':
+						cigar_sum = 0
+						for tuples in cigar_parts:
+							# Add all the numbers together
+							cigar_sum += tuples[0]
+						if the first part of cigar (cigar_parts[0][1]) == 'S':
+							cigar_sum = cigar_sum - first number (cigar_parts[0][0])
+						start = pos + cigar_sum
+				add start to key_tuple
+			# Chromosome
+				chrom = info[2]
+				add chrom to key_tuple	
+	# Fill out output file		
+		if key_tuple is NOT already in set:
+			add key_tuple to set
+			add line to output file
+		else:
+			go to next line
+			
