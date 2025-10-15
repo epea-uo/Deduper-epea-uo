@@ -5,7 +5,7 @@ abundance of certain sequences and artificially increasing the read counts
 
 Example input file: 
 
-Psuedocode:
+Pseudocode:
 use argparse to set input, output, UMI list, and help flags
 
 Create empty set to store UMI, Strand, Cigar, Position, Chromosome
